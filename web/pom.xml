@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <artifactId>gol-parent</artifactId>
+        <groupId>ru.sbt.rgrtu</groupId>
+        <version>13.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>gol-web</artifactId>
+    <packaging>war</packaging>
+
+    <properties>
+        <test.jetty.context>${project.basedir}/src/test/resources/jetty-context.xml</test.jetty.context>
+        <test.jetty.port>8080</test.jetty.port>
+        <test.jetty.stop-key>STOP</test.jetty.stop-key>
+        <test.jetty.stop-port>9999</test.jetty.stop-port>
+        <HikariCP.version>3.2.0</HikariCP.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>${HikariCP.version}</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>ru.sbt.rgrtu</groupId>
+            <artifactId>gol-core</artifactId>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <profile> <!-- mvn package -Prun-embedded will build war, run jetty and deploy war inside jetty -->
+            <id>run-embedded</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.eclipse.jetty</groupId>
+                        <artifactId>jetty-maven-plugin</artifactId>
+                        <configuration>
+                            <httpConnector>
+                                <port>${test.jetty.port}</port>
+                            </httpConnector>
+                            <webAppConfig>
+                                <contextPath>/gol</contextPath>
+                            </webAppConfig>
+                            <contextXml>${test.jetty.context}</contextXml>
+                        </configuration>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.hsqldb</groupId>
+                                <artifactId>hsqldb</artifactId>
+                                <version>${hsqldb.version}</version>
+                            </dependency>
+                        </dependencies>
+                        <executions>
+                            <execution>
+                                <id>start-jetty</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>stop</goal>
+                                    <goal>run-war</goal>
+                                </goals>
+                                <configuration>
+                                    <stopKey>${test.jetty.stop-key}</stopKey>
+                                    <stopPort>${test.jetty.stop-port}</stopPort>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>
