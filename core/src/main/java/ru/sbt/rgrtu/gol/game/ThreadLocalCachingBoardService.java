@@ -38,8 +38,7 @@ public class ThreadLocalCachingBoardService implements BoardService {
         if (cache.get() == null) {
             cache.set(new Cache(size));
         }
-        return cache.get().computeIfAbsent(new XY(x.intValue(), y.intValue()), p -> delegate.getPoint(BigInteger.valueOf(p.x)
-                , BigInteger.valueOf(p.y)));
+        return cache.get().computeIfAbsent(new XY(x, y), p -> delegate.getPoint(p.x, p.y));
     }
 
     @Override
@@ -54,9 +53,9 @@ public class ThreadLocalCachingBoardService implements BoardService {
     }
 
     private static class XY {
-        int x, y;
+        BigInteger x, y;
 
-        XY(int x, int y) {
+        XY(BigInteger x, BigInteger y) {
             this.x = x;
             this.y = y;
         }
@@ -66,8 +65,8 @@ public class ThreadLocalCachingBoardService implements BoardService {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             XY xy = (XY) o;
-            return x == xy.x &&
-                    y == xy.y;
+            return x.equals(xy.x) &&
+                    y.equals(xy.y);
         }
 
         @Override
