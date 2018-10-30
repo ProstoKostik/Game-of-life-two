@@ -61,25 +61,27 @@ public class Gol {
 
     private void calculateRow(BigInteger y) {
         for (BigInteger x = BigInteger.ZERO; !x.equals(board.getSizeX()); x = x.add(BigInteger.ONE)) {
-            int neighbours = countNeighbours(x.intValue(), y.intValue());
+            BigInteger neighbours = countNeighbours(x, y);
             board.setPoint(x, y, calculateNewValue(board.getPoint(x, y), neighbours));
         }
     }
 
-    private int countNeighbours(int x, int y) {
-        int count = 0;
-        for (int m = x - 1; m <= x + 1; m++) {
-            for (int n = y - 1; n <= y + 1; n++) {
-                if (m == x && n == y) continue;
-                if (board.getPoint(BigInteger.valueOf(m), BigInteger.valueOf(n))) count++;
+    private BigInteger countNeighbours(BigInteger x, BigInteger y) {
+        BigInteger count = BigInteger.ZERO;
+        for (BigInteger m = x.subtract(BigInteger.ONE); !m.equals(x.add(BigInteger.ONE).add(BigInteger.ONE));
+             m = m.add(BigInteger.ONE)) {
+            for (BigInteger n = y.subtract(BigInteger.ONE); !n.equals(y.add(BigInteger.ONE).add(BigInteger.ONE));
+                 n = n.add(BigInteger.ONE)) {
+                if (m.equals(x) && n.equals(y)) continue;
+                if (board.getPoint(m, n)) count = count.add(BigInteger.ONE);
             }
         }
         return count;
     }
 
-    private boolean calculateNewValue(boolean old, int n) {
-        if (n == 3) return true; // rules 2 and 4
-        return old && n == 2; // rules 1, 2 and 3
+    private boolean calculateNewValue(boolean old, BigInteger n) {
+        if (n.equals(BigInteger.valueOf(3))) return true; // rules 2 and 4
+        return old && n.equals(BigInteger.valueOf(2)); // rules 1, 2 and 3
     }
 
 }
