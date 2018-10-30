@@ -40,10 +40,10 @@ public class Gol {
 
     public void nextStep() {
         List<Future> f = new LinkedList<>();
-        for (int y = 0; y < board.getSizeY().intValue(); y++) {
+        for (BigInteger y = BigInteger.ZERO; !y.equals(board.getSizeY()); y = y.add(BigInteger.ONE)) {
             if (executor == null) calculateRow(y);
             else {
-                final int yy = y;
+                final BigInteger yy = y;
                 f.add(executor.submit(() -> calculateRow(yy)));
             }
         }
@@ -59,11 +59,10 @@ public class Gol {
         board.applyNewValues();
     }
 
-    private void calculateRow(int y) {
-        for (int x = 0; x < board.getSizeX().intValue(); x++) {
-            int neighbours = countNeighbours(x, y);
-            board.setPoint(BigInteger.valueOf(x), BigInteger.valueOf(y),
-                    calculateNewValue(board.getPoint(BigInteger.valueOf(x), BigInteger.valueOf(y)), neighbours));
+    private void calculateRow(BigInteger y) {
+        for (BigInteger x = BigInteger.ZERO; !x.equals(board.getSizeX()); x = x.add(BigInteger.ONE)) {
+            int neighbours = countNeighbours(x.intValue(), y.intValue());
+            board.setPoint(x, y, calculateNewValue(board.getPoint(x, y), neighbours));
         }
     }
 
