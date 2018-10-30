@@ -5,6 +5,7 @@ import ru.sbt.rgrtu.gol.config.Configuration;
 import ru.sbt.rgrtu.gol.config.ConfigurationProvider;
 
 import javax.annotation.PostConstruct;
+import java.math.BigInteger;
 import java.util.Random;
 
 /**
@@ -15,13 +16,17 @@ public class InMemoryBoardService implements BoardService {
     private final ConfigurationProvider configurationProvider;
 
     private long seed;
-    private int sizeX;
-    private int sizeY;
+    private BigInteger sizeX;
+    private BigInteger sizeY;
     private long generation;
 
-    /** Current values of points on the game field. */
+    /**
+     * Current values of points on the game field.
+     */
     private boolean[][] current;
-    /** Values of points on the game field for the next generation. */
+    /**
+     * Values of points on the game field for the next generation.
+     */
     private boolean[][] next;
 
     @Autowired
@@ -40,31 +45,31 @@ public class InMemoryBoardService implements BoardService {
         next = createGeneration();
 
         Random random = new Random(seed);
-        for (int y = 0; y < sizeY; y++) {
-            for (int x = 0; x < sizeX; x++) {
-                current[x][y] = random.nextBoolean();
+        for (BigInteger y = BigInteger.ZERO; !y.equals(sizeY); y = y.add(BigInteger.ONE)) {
+            for (BigInteger x = BigInteger.ZERO; !x.equals(sizeX); x = x.add(BigInteger.ONE)) {
+                current[x.intValue()][y.intValue()] = random.nextBoolean();
             }
         }
     }
 
     @Override
-    public int getSizeX() {
+    public BigInteger getSizeX() {
         return sizeX;
     }
 
     @Override
-    public int getSizeY() {
+    public BigInteger getSizeY() {
         return sizeY;
     }
 
     @Override
-    public void setPoint(int x, int y, boolean alive) {
-        next[x][y] = alive;
+    public void setPoint(BigInteger x, BigInteger y, boolean alive) {
+        next[x.intValue()][y.intValue()] = alive;
     }
 
     @Override
-    public boolean getPoint(int x, int y) {
-        return current[(sizeX + x) % sizeX][(sizeY + y) % sizeY];
+    public boolean getPoint(BigInteger x, BigInteger y) {
+        return current[(sizeX.add(x)).remainder(sizeX).intValue()][(sizeY.add(y)).remainder(sizeY).intValue()];
     }
 
     @Override
@@ -80,6 +85,6 @@ public class InMemoryBoardService implements BoardService {
     }
 
     private boolean[][] createGeneration() {
-        return new boolean[sizeX][sizeY];
+        return new boolean[sizeX.intValue()][sizeY.intValue()];
     }
 }

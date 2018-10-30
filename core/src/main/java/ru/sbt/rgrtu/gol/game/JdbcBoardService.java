@@ -6,6 +6,7 @@ import ru.sbt.rgrtu.gol.config.ConfigurationProvider;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
+import java.math.BigInteger;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -26,8 +27,8 @@ public class JdbcBoardService implements BoardService {
     private final DataSource dataSource;
 
     private long seed;
-    private int sizeX;
-    private int sizeY;
+    private BigInteger sizeX;
+    private BigInteger sizeY;
     private long generation;
 
     private final List<Future> futures = new LinkedList<>();
@@ -46,31 +47,31 @@ public class JdbcBoardService implements BoardService {
         this.sizeY = configuration.getSizeY();
 
         Random random = new Random(seed);
-        for (int y = 0; y < sizeY; y++) {
-            for (int x = 0; x < sizeX; x++) {
+        for (BigInteger y = BigInteger.ZERO; !y.equals(sizeY); y = y.add(BigInteger.ONE)) {
+            for (BigInteger x = BigInteger.ZERO; !x.equals(sizeX); x = x.add(BigInteger.ONE)) {
                 if (random.nextBoolean()) setAlive(generation, x, y);
             }
         }
     }
 
     @Override
-    public int getSizeX() {
+    public BigInteger getSizeX() {
         return sizeX;
     }
 
     @Override
-    public int getSizeY() {
+    public BigInteger getSizeY() {
         return sizeY;
     }
 
     @Override
-    public void setPoint(int x, int y, boolean alive) {
-        if(alive) setAlive(generation + 1, x, y);
+    public void setPoint(BigInteger x, BigInteger y, boolean alive) {
+        if (alive) setAlive(generation + 1, x, y);
     }
 
     @Override
-    public boolean getPoint(int x, int y) {
-        return isAlive(generation, (sizeX + x) % sizeX, (sizeY + y) % sizeY);
+    public boolean getPoint(BigInteger x, BigInteger y) {
+        return isAlive(generation, (sizeX.add(x)).remainder(sizeX), (sizeY.add(y)).remainder(sizeY));
     }
 
     @Override
@@ -84,14 +85,14 @@ public class JdbcBoardService implements BoardService {
         return generation;
     }
 
-    private void setAlive(long generation, int x, int y) {
+    private void setAlive(long generation, BigInteger x, BigInteger y) {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(
-             "insert into Board (generation, x, y, alive) values (?, ?, ?, 1) ")
-        ){
-            statement.setInt(1, (int)generation);
-            statement.setInt(2, x);
-            statement.setInt(3, y);
+                     "insert into Board (generation, x, y, alive) values (?, ?, ?, 1) ")
+        ) {
+            statement.setInt(1, (int) generation);
+            statement.setInt(2, x.intValue());
+            statement.setInt(3, y.intValue());
             statement.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -101,9 +102,9 @@ public class JdbcBoardService implements BoardService {
     private void setDead(long generation, int x, int y) {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(
-             "delete from Board where generation=? and x=? and y=?")
-        ){
-            statement.setInt(1, (int)generation);
+                     "delete from Board where generation=? and x=? and y=?")
+        ) {
+            statement.setInt(1, (int) generation);
             statement.setInt(2, x);
             statement.setInt(3, y);
             statement.executeUpdate();
@@ -112,15 +113,15 @@ public class JdbcBoardService implements BoardService {
         }
     }
 
-    private boolean isAlive(long generation, int x, int y) {
+    private boolean isAlive(long generation, BigInteger x, BigInteger y) {
         boolean result = false;
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(
-             "select alive from Board where generation=? and x=? and y=?")
-        ){
-            statement.setInt(1, (int)generation);
-            statement.setInt(2, x);
-            statement.setInt(3, y);
+                     "select alive from Board where generation=? and x=? and y=?")
+        ) {
+            statement.setInt(1, (int) generation);
+            statement.setInt(2, x.intValue());
+            statement.setInt(3, y.intValue());
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
                 result = rs.getBoolean("alive");
@@ -134,9 +135,9 @@ public class JdbcBoardService implements BoardService {
     private void clearGeneration(long generation) {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(
-             "delete from Board where generation=?")
-        ){
-            statement.setInt(1, (int)generation);
+                     "delete from Board where generation=?")
+        ) {
+            statement.setInt(1, (int) generation);
             statement.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());

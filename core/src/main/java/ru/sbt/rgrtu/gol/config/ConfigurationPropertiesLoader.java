@@ -2,16 +2,22 @@ package ru.sbt.rgrtu.gol.config;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.util.Properties;
 
-/** Loads configuration from a file in classpath. */
+/**
+ * Loads configuration from a file in classpath.
+ */
 public class ConfigurationPropertiesLoader implements ConfigurationProvider {
 
-    /** Properties file location. */
+    /**
+     * Properties file location.
+     */
     private final String file;
 
     /**
      * Create provider with given file location.
+     *
      * @param file location of a file in classpath
      */
     public ConfigurationPropertiesLoader(String file) {
@@ -43,8 +49,8 @@ public class ConfigurationPropertiesLoader implements ConfigurationProvider {
 
     private Configuration toConfiguration(Properties properties) {
         Configuration configuration = new Configuration();
-        configuration.setSizeX(Integer.parseInt(properties.getProperty("game.board.size.x")));
-        configuration.setSizeY(Integer.parseInt(properties.getProperty("game.board.size.y")));
+        configuration.setSizeX(new BigInteger(properties.getProperty("game.board.size.x")));
+        configuration.setSizeY(new BigInteger(properties.getProperty("game.board.size.y")));
         configuration.setSeed(Long.parseLong(properties.getProperty("game.seed")));
         return configuration;
     }

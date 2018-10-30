@@ -1,32 +1,34 @@
 package ru.sbt.rgrtu.gol.config;
 
+import java.math.BigInteger;
+
 /**
  * Game settings
  */
 public class Configuration {
 
     /** Horizontal size of the board. */
-    private int sizeX;
+    private BigInteger sizeX;
     /** Vertical size of the board. */
-    private int sizeY;
+    private BigInteger sizeY;
 
     /** Seed for random board initialization. */
     private long seed;
 
 
-    public int getSizeX() {
+    public BigInteger getSizeX() {
         return sizeX;
     }
 
-    public void setSizeX(int sizeX) {
+    public void setSizeX(BigInteger sizeX) {
         this.sizeX = sizeX;
     }
 
-    public int getSizeY() {
+    public BigInteger getSizeY() {
         return sizeY;
     }
 
-    public void setSizeY(int sizeY) {
+    public void setSizeY(BigInteger sizeY) {
         this.sizeY = sizeY;
     }
 

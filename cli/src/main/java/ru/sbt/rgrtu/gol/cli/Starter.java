@@ -14,6 +14,8 @@ import ru.sbt.rgrtu.gol.presentation.ColoredPresentation;
 import ru.sbt.rgrtu.gol.presentation.Presentation;
 import ru.sbt.rgrtu.gol.presentation.SmilePresentation;
 
+import java.math.BigInteger;
+
 public class Starter {
 
     public static void main(String[] args) {
@@ -21,14 +23,14 @@ public class Starter {
 //        ConfigurationProvider cpl = createInlineConfigurationProvider();
         ConfigurationProvider cpl = createConfigurationPropertiesLoader();
         BoardService board = new InMemoryBoardService(cpl);
-        ((InMemoryBoardService)board).init();
+        ((InMemoryBoardService) board).init();
         Gol gol = new Gol(board);
 //        Presentation presentation = new AtAndSpacePresentation(gol);
         Presentation presentation = new SmilePresentation(board);
 //        Presentation presentation = new ColoredPresentation(gol);
 
-        Controller controller = new FrameByFrameController(gol, presentation);
-//        Controller controller = new TimedController(gol, presentation);
+//        Controller controller = new FrameByFrameController(gol, presentation);
+        Controller controller = new TimedController(gol, presentation);
         controller.run();
     }
 
@@ -44,8 +46,8 @@ public class Starter {
         return () -> {
             Configuration configuration = new Configuration();
             configuration.setSeed(20180921L);
-            configuration.setSizeX(150);
-            configuration.setSizeY(35);
+            configuration.setSizeX(BigInteger.valueOf(150));
+            configuration.setSizeY(BigInteger.valueOf(35));
             return configuration;
         };
     }

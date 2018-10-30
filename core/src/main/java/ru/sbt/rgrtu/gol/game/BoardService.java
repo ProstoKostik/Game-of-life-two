@@ -1,5 +1,7 @@
 package ru.sbt.rgrtu.gol.game;
 
+import java.math.BigInteger;
+
 /**
  * Game board represents a field.
  * <p>Stores current values and values for the next step
@@ -8,29 +10,35 @@ package ru.sbt.rgrtu.gol.game;
  */
 public interface BoardService {
 
-    int getSizeX();
+    BigInteger getSizeX();
 
-    int getSizeY();
+    BigInteger getSizeY();
 
     /**
      * Sets a new value for a point.
-     * @param x abscissa
-     * @param y ordinate
+     *
+     * @param x     abscissa
+     * @param y     ordinate
      * @param alive new value
      */
-    void setPoint(int x, int y, boolean alive);
+    void setPoint(BigInteger x, BigInteger y, boolean alive);
 
     /**
      * Get current value of the point.
+     *
      * @param x abscissa
      * @param y ordinate
      * @return current value
      */
-    boolean getPoint(int x, int y);
+    boolean getPoint(BigInteger x, BigInteger y);
 
-    /** Applies all values of a new generation and creates the next one. */
+    /**
+     * Applies all values of a new generation and creates the next one.
+     */
     void applyNewValues();
 
-    /** Get the number of last applied generation. */
+    /**
+     * Get the number of last applied generation.
+     */
     long getGeneration();
 }

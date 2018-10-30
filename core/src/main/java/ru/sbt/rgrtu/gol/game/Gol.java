@@ -2,6 +2,7 @@ package ru.sbt.rgrtu.gol.game;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,6 +26,7 @@ public class Gol {
 
     /**
      * Create an instance with a given game field.
+     *
      * @param board game board
      */
     @Autowired
@@ -38,7 +40,7 @@ public class Gol {
 
     public void nextStep() {
         List<Future> f = new LinkedList<>();
-        for (int y = 0; y < board.getSizeY(); y++) {
+        for (int y = 0; y < board.getSizeY().intValue(); y++) {
             if (executor == null) calculateRow(y);
             else {
                 final int yy = y;
@@ -58,18 +60,19 @@ public class Gol {
     }
 
     private void calculateRow(int y) {
-        for (int x = 0; x < board.getSizeX(); x++) {
+        for (int x = 0; x < board.getSizeX().intValue(); x++) {
             int neighbours = countNeighbours(x, y);
-            board.setPoint(x, y, calculateNewValue(board.getPoint(x,y), neighbours));
+            board.setPoint(BigInteger.valueOf(x), BigInteger.valueOf(y),
+                    calculateNewValue(board.getPoint(BigInteger.valueOf(x), BigInteger.valueOf(y)), neighbours));
         }
     }
 
     private int countNeighbours(int x, int y) {
         int count = 0;
-        for (int m = x-1; m <= x+1; m++) {
-            for (int n = y-1; n <= y+1; n++) {
-                if (m==x && n==y) continue;
-                if (board.getPoint(m,n)) count++;
+        for (int m = x - 1; m <= x + 1; m++) {
+            for (int n = y - 1; n <= y + 1; n++) {
+                if (m == x && n == y) continue;
+                if (board.getPoint(BigInteger.valueOf(m), BigInteger.valueOf(n))) count++;
             }
         }
         return count;

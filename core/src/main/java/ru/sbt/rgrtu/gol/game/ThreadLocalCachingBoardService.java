@@ -1,5 +1,6 @@
 package ru.sbt.rgrtu.gol.game;
 
+import java.math.BigInteger;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -18,26 +19,27 @@ public class ThreadLocalCachingBoardService implements BoardService {
     }
 
     @Override
-    public int getSizeX() {
+    public BigInteger getSizeX() {
         return delegate.getSizeX();
     }
 
     @Override
-    public int getSizeY() {
+    public BigInteger getSizeY() {
         return delegate.getSizeY();
     }
 
     @Override
-    public void setPoint(int x, int y, boolean alive) {
+    public void setPoint(BigInteger x, BigInteger y, boolean alive) {
         delegate.setPoint(x, y, alive);
     }
 
     @Override
-    public boolean getPoint(int x, int y) {
-        if(cache.get() == null) {
+    public boolean getPoint(BigInteger x, BigInteger y) {
+        if (cache.get() == null) {
             cache.set(new Cache(size));
         }
-        return cache.get().computeIfAbsent(new XY(x, y), p -> delegate.getPoint(p.x, p.y));
+        return cache.get().computeIfAbsent(new XY(x.intValue(), y.intValue()), p -> delegate.getPoint(BigInteger.valueOf(p.x)
+                , BigInteger.valueOf(p.y)));
     }
 
     @Override
