@@ -24,12 +24,24 @@ import java.util.concurrent.Executors;
 
 public class DbContextAssembler {
 
+    private static DbContextAssembler instance;
+    private boolean firstPool = false;
+
+    private DbContextAssembler() {
+    }
+
+    public static DbContextAssembler getInstance() {
+        if (instance == null)
+            instance = new DbContextAssembler();
+        return instance;
+    }
+
     public Context assembleContext() {
         ConfigurationProvider cpl = new ConfigurationPropertiesLoader("config.properties");
 //        DataSource dataSource = getDataSource();
         DataSource dataSource = getPooledDataSource();
         BoardService board = new JdbcBoardService(cpl, dataSource);
-        ((JdbcBoardService)board).init();
+        ((JdbcBoardService) board).init();
         board = new ThreadLocalCachingBoardService(board, 15);
         Gol gol = new Gol(board);
         ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
@@ -52,23 +64,24 @@ public class DbContextAssembler {
         config.setUsername("sa");
         config.setPassword("");
         HikariDataSource ds = new HikariDataSource(config);
-        initTable(ds);
+        if (firstPool == false)
+            initTable(ds);
         return ds;
     }
 
-    private DataSource getDataSource() {
+ /*   private DataSource getDataSource() {
         JDBCDataSource ds = new JDBCDataSource();
         ds.setURL("jdbc:hsqldb:mem:gol");
         ds.setUser("sa");
         ds.setPassword("sa");
         initTable(ds);
         return ds;
-    }
+    }*/
 
     private void initTable(DataSource ds) {
         try (Connection connection = ds.getConnection();
              Statement statement = connection.createStatement()
-        ){
+        ) {
             statement.execute("drop table if exists Board");
             statement.execute("create table Board (\n" +
                     "       id integer not null IDENTITY,\n" +
@@ -81,6 +94,7 @@ public class DbContextAssembler {
             statement.execute("create unique index if not exists pk_board_index on Board\n" +
                     "(generation, x, y)");
             connection.commit();
+            firstPool = true;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }

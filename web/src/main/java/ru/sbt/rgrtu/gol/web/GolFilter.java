@@ -14,16 +14,15 @@ import java.io.IOException;
 public class GolFilter implements Filter {
 
     private void initGol(String location, HttpServletRequest req) {
-//        Context context = new DbContextAssembler().assembleContext();
-        Context context = new SimpleContextAssembler().assembleContext();
-        //       ApplicationContext context = new ClassPathXmlApplicationContext(location);
-
-        req.getSession().setAttribute("gol", context.get(Gol.class));
-        req.getSession().setAttribute("presentation", context.get(HtmlPresentation.class));
-        req.getSession().setAttribute("monitoring", context.get(MonitoringService.class));
-        //       req.getSession().setAttribute("gol", context.getBean(Gol.class));
-        //       req.getSession().setAttribute("presentation", context.getBean(HtmlPresentation.class));
-        //       req.getSession().setAttribute("monitoring", context.getBean(MonitoringService.class));
+        //       Context context = DbContextAssembler.getInstance().assembleContext();
+        //       Context context = new SimpleContextAssembler().assembleContext();
+        ApplicationContext context = new ClassPathXmlApplicationContext(location);
+        //       req.getSession().setAttribute("gol", context.get(Gol.class));
+        //      req.getSession().setAttribute("presentation", context.get(HtmlPresentation.class));
+        //       req.getSession().setAttribute("monitoring", context.get(MonitoringService.class));
+        req.getSession().setAttribute("gol", context.getBean(Gol.class));
+        req.getSession().setAttribute("presentation", context.getBean(HtmlPresentation.class));
+        req.getSession().setAttribute("monitoring", context.getBean(MonitoringService.class));
     }
 
     @Override
@@ -33,11 +32,10 @@ public class GolFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
-        if (req.getSession() == null || req.getSession().getAttribute("gol") == null) {              // если сессия не создана
-            // надо получить текущий url, чтобы по нему перенаправить потом с login.jsp
+        if (req.getSession() == null || req.getSession().getAttribute("gol") == null) {
             initGol("heavyContext.xml", req);
         }
-        chain.doFilter(request, response);  // вызываем следующий фильтр.
+        chain.doFilter(request, response);
     }
 
     @Override

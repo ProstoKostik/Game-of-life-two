@@ -27,7 +27,6 @@ public class GolServlet extends HttpServlet {
         ((MonitoringService)session.getAttribute("monitoring")).calculationsStarts();
         ((Gol)session.getAttribute("gol")).nextStep();
         ((HtmlPresentation)session.getAttribute("presentation")).show();
-        System.out.println(session.getId());
     }
 
 }
