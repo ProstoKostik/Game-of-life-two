@@ -16,7 +16,6 @@ public class GolServlet extends HttpServlet {
     @Override
     public synchronized void init() throws ServletException {
         super.init();
-//        initGol("simpleContext.xml");
     }
 
     @Override

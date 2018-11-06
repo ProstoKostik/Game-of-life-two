@@ -1,6 +1,8 @@
 package ru.sbt.rgrtu.gol.game;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import ru.sbt.rgrtu.gol.config.Configuration;
 import ru.sbt.rgrtu.gol.config.ConfigurationProvider;
 
@@ -25,6 +27,7 @@ public class JdbcBoardService implements BoardService {
 
     private final ConfigurationProvider configurationProvider;
     private final DataSource dataSource;
+    private final JdbcTemplate jdbcTemplate;
 
     private long seed;
     private BigInteger sizeX;
@@ -37,6 +40,7 @@ public class JdbcBoardService implements BoardService {
     public JdbcBoardService(ConfigurationProvider configurationProvider, DataSource dataSource) {
         this.configurationProvider = configurationProvider;
         this.dataSource = dataSource;
+        jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
     @PostConstruct
@@ -86,31 +90,8 @@ public class JdbcBoardService implements BoardService {
     }
 
     private void setAlive(long generation, BigInteger x, BigInteger y) {
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(
-                     "insert into Board (generation, x, y, alive) values (?, ?, ?, 1) ")
-        ) {
-            statement.setInt(1, (int) generation);
-            statement.setInt(2, x.intValue());
-            statement.setInt(3, y.intValue());
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    private void setDead(long generation, int x, int y) {
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(
-                     "delete from Board where generation=? and x=? and y=?")
-        ) {
-            statement.setInt(1, (int) generation);
-            statement.setInt(2, x);
-            statement.setInt(3, y);
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
+        jdbcTemplate.update("insert into Board (generation, x, y, alive) values (?, ?, ?, 1)"
+                , (int) generation, x.intValue(), y.intValue());
     }
 
     private boolean isAlive(long generation, BigInteger x, BigInteger y) {
@@ -130,17 +111,19 @@ public class JdbcBoardService implements BoardService {
             System.out.println(e.getMessage());
         }
         return result;
+
+        /*       List<Boolean> results = jdbcTemplate.query("select alive from Board where generation=? and x=? and y=?"
+                , new Object[]{(int) generation, x.intValue(), y.intValue()}, new RowMapper() {
+                    public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        return rs.getBoolean(1);
+                    }
+                });
+        if (results.isEmpty())
+            return false;
+        else return results.get(0);*/
     }
 
     private void clearGeneration(long generation) {
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(
-                     "delete from Board where generation=?")
-        ) {
-            statement.setInt(1, (int) generation);
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
+        jdbcTemplate.update("delete from Board where generation=?", (int) generation);
     }
 }

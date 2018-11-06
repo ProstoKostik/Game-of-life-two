@@ -34,6 +34,7 @@ public class GolFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         if (req.getSession() == null || req.getSession().getAttribute("gol") == null) {
             initGol("heavyContext.xml", req);
+            //        initGol("simpleContext.xml");
         }
         chain.doFilter(request, response);
     }
