@@ -8,7 +8,7 @@
     ">
 
     <context:annotation-config/>
-    
+
     <bean class="ru.sbt.rgrtu.gol.config.ConfigurationPropertiesLoader">
         <constructor-arg name="file" value="config.properties" />
     </bean>
@@ -36,7 +36,7 @@
     <bean class="ru.sbt.rgrtu.gol.game.Gol" />
 
     <bean class="ru.sbt.rgrtu.gol.monitoring.MonitoringServiceImpl" />
-    <bean class="ru.sbt.rgrtu.gol.web.HtmlPresentation" >
+    <bean class="ru.sbt.rgrtu.gol.web.presentation.HtmlPresentation" >
         <constructor-arg name="reload" value="true" />
     </bean>
 

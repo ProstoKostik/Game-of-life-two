@@ -1,4 +1,4 @@
-package ru.sbt.rgrtu.gol.web;
+package ru.sbt.rgrtu.gol.web.presentation;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.sbt.rgrtu.gol.game.BoardService;
@@ -8,44 +8,12 @@ import ru.sbt.rgrtu.gol.presentation.Presentation;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigInteger;
 
-public class HtmlPresentation implements Presentation {
+public class HtmlPresentation  extends WebPresentation{
 
-    private static final String PAGE_TEMPLATE =
-            "<html>\n" +
-                    "<head>\n" +
-                    "<style>\n" +
-                    "body {background-color: black; color:gray}\n" +
-                    "table {border-spacing: 0px;}\n" +
-                    "td { height:10px; width:10px; border: 1px solid; border-color: 202020; }\n" +
-                    ".alive {background-color: green;}\n" +
-                    ".dead {background-color: black;}\n" +
-                    "</style>\n" +
-                    "%1$s\n" +
-                    "</head>\n" +
-                    "<body>\n" +
-                    "%2$s\n%3$s\n%4$s" +
-                    "</body>\n" +
-                    "</html>";
     private static final String RELOAD =
             "<script type=\"text/javascript\">\n" +
                     "window.onload=function(){setTimeout(function() { location.reload(true); }, 500);};" +
                     "</script>\n";
-    private static final String HEADER_TEMPLATE =
-            "<h1>Generation: %1$05d</h1>";
-    private static final String FOOTER_TEMPLATE =
-            "<p>generated in %1$06dms</p>";
-    private static final String BOARD_TEMPLATE =
-            "<table>\n" +
-                    "<tbody>\n" +
-                    "%1$s\n" +
-                    "</tbody>\n" +
-                    "</table>";
-    private static final String ROW_TEMPLATE =
-            "<tr>%1$s</tr>\n";
-    private static final String LIVE_CELL =
-            "<td class=\"alive\"></td>";
-    private static final String DEAD_CELL =
-            "<td class=\"dead\"></td>";
 
     private final BoardService board;
     private final boolean reload;

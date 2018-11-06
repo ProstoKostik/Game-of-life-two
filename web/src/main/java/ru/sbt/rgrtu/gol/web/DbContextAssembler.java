@@ -13,6 +13,7 @@ import ru.sbt.rgrtu.gol.game.ThreadLocalCachingBoardService;
 import ru.sbt.rgrtu.gol.monitoring.MonitoringService;
 import ru.sbt.rgrtu.gol.monitoring.MonitoringServiceImpl;
 import ru.sbt.rgrtu.gol.presentation.Presentation;
+import ru.sbt.rgrtu.gol.web.presentation.HtmlPresentation;
 
 import javax.sql.DataSource;
 import java.sql.Connection;

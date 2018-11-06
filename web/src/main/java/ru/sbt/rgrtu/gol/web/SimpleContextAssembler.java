@@ -9,6 +9,7 @@ import ru.sbt.rgrtu.gol.game.InMemoryBoardService;
 import ru.sbt.rgrtu.gol.monitoring.MonitoringService;
 import ru.sbt.rgrtu.gol.monitoring.MonitoringServiceImpl;
 import ru.sbt.rgrtu.gol.presentation.Presentation;
+import ru.sbt.rgrtu.gol.web.presentation.HtmlPresentation;
 
 public class SimpleContextAssembler {
 
