@@ -45,7 +45,6 @@ public class JdbcBoardService implements BoardService {
         jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    @PostConstruct
     public void init() {
         Configuration configuration = configurationProvider.getConfiguration();
         this.seed = configuration.getSeed();
