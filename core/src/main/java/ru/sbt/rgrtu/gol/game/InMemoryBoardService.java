@@ -53,6 +53,11 @@ public class InMemoryBoardService implements BoardService {
     }
 
     @Override
+    public void setUserId(String userId){
+
+    }
+
+    @Override
     public BigInteger getSizeX() {
         return sizeX;
     }

@@ -20,6 +20,9 @@
         <filter-name>GolFilter</filter-name>
         <filter-class>ru.sbt.rgrtu.gol.web.GolFilter</filter-class>
     </filter>
+    <listener>
+        <listener-class>ru.sbt.rgrtu.gol.web.SessionListener</listener-class>
+    </listener>
     <filter-mapping>
         <filter-name>GolFilter</filter-name>
         <url-pattern>/*</url-pattern>

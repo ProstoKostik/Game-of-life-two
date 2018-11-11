@@ -31,21 +31,18 @@ public class JdbcBoardService implements BoardService {
     private final ConfigurationProvider configurationProvider;
     private final DataSource dataSource;
     private final JdbcTemplate jdbcTemplate;
-    private final MonitoringServiceImpl monitoringServiceImpl;
 
     private long seed;
     private BigInteger sizeX;
     private BigInteger sizeY;
     private long generation;
-
-    private final List<Future> futures = new LinkedList<>();
+    private String userId = "";
 
     @Autowired
     public JdbcBoardService(ConfigurationProvider configurationProvider, DataSource dataSource) {
         this.configurationProvider = configurationProvider;
         this.dataSource = dataSource;
         jdbcTemplate = new JdbcTemplate(dataSource);
-        monitoringServiceImpl = new MonitoringServiceImpl();
     }
 
     @PostConstruct
@@ -55,10 +52,12 @@ public class JdbcBoardService implements BoardService {
         this.sizeX = configuration.getSizeX();
         this.sizeY = configuration.getSizeY();
 
-        Random random = new Random(seed);
-        for (BigInteger y = BigInteger.ZERO; !y.equals(sizeY); y = y.add(BigInteger.ONE)) {
-            for (BigInteger x = BigInteger.ZERO; !x.equals(sizeX); x = x.add(BigInteger.ONE)) {
-                if (random.nextBoolean()) setAlive(generation, x, y);
+        if (userId != "") {
+            Random random = new Random(seed);
+            for (BigInteger y = BigInteger.ZERO; !y.equals(sizeY); y = y.add(BigInteger.ONE)) {
+                for (BigInteger x = BigInteger.ZERO; !x.equals(sizeX); x = x.add(BigInteger.ONE)) {
+                    if (random.nextBoolean()) setAlive(generation, x, y);
+                }
             }
         }
     }
@@ -95,20 +94,20 @@ public class JdbcBoardService implements BoardService {
     }
 
     private void setAlive(long generation, BigInteger x, BigInteger y) {
-        jdbcTemplate.update("insert into Board (generation, x, y, alive) values (?, ?, ?, 1)"
-                , (int) generation, x.intValue(), y.intValue());
+        jdbcTemplate.update("insert into Board (generation, x, y, alive, user_id) values (?, ?, ?, 1, ?)"
+                , (int) generation, x.intValue(), y.intValue(), userId);
     }
 
     private boolean isAlive(long generation, BigInteger x, BigInteger y) {
-
-     /*   boolean result = false;
+        boolean result = false;
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(
-                     "select alive from Board where generation=? and x=? and y=?")
+                     "select alive from Board where generation=? and x=? and y=? and user_id = ?")
         ) {
             statement.setInt(1, (int) generation);
             statement.setInt(2, x.intValue());
             statement.setInt(3, y.intValue());
+            statement.setString(4, userId);
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
                 result = rs.getBoolean("alive");
@@ -116,8 +115,8 @@ public class JdbcBoardService implements BoardService {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        return result;*/
-        return jdbcTemplate.query("select alive from Board where generation=? and x=? and y=?"
+        return result;
+    /*    return jdbcTemplate.query("select alive from Board where generation=? and x=? and y=?"
                 , new Object[]{(int) generation, x.intValue(), y.intValue()}, new ResultSetExtractor<Boolean>() {
                     @Override
                     public Boolean extractData(ResultSet rs) throws SQLException,
@@ -125,7 +124,7 @@ public class JdbcBoardService implements BoardService {
                         return rs.next() ? rs.getBoolean("alive") : false;
                     }
                 });
-   /*     List<Boolean> results = jdbcTemplate.query("select alive from Board where generation=? and x=? and y=?"
+        List<Boolean> results = jdbcTemplate.query("select alive from Board where generation=? and x=? and y=?"
                 , new Object[]{(int) generation, x.intValue(), y.intValue()}, new RowMapper() {
                     public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                         return rs.getBoolean(1);
@@ -135,7 +134,11 @@ public class JdbcBoardService implements BoardService {
             result = results.get(0);*/
     }
 
-    private void clearGeneration(long generation) {
-        jdbcTemplate.update("delete from Board where generation=?", (int) generation);
+    public void clearGeneration(long generation) {
+        jdbcTemplate.update("delete from Board where generation=? and user_id = ?", (int) generation, userId);
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

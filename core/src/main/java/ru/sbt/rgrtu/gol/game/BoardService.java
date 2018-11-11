@@ -41,4 +41,6 @@ public interface BoardService {
      * Get the number of last applied generation.
      */
     long getGeneration();
+
+    void setUserId(String userId);
 }

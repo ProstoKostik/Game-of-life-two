@@ -54,6 +54,7 @@ public class DbContextAssembler {
         context.add(gol);
         context.add(presentation);
         context.add(monitoring);
+        context.add(board);
 
         return context;
     }
@@ -88,6 +89,7 @@ public class DbContextAssembler {
                 "       x integer not null,\n" +
                 "       y integer not null,\n" +
                 "       alive integer not null,\n" +
+                "       user_id varchar(50) not null,\n" +
                 "       primary key (id)\n" +
                 "    )");
         jdbcTemplate.execute("create unique index if not exists pk_board_index on Board\n" +

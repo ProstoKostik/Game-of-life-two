@@ -75,6 +75,11 @@ public class ThreadLocalCachingBoardService implements BoardService {
         }
     }
 
+    @Override
+    public void setUserId(String userId){
+
+    }
+
     private static class Cache extends LinkedHashMap<XY, Boolean> {
 
         private final int size;
