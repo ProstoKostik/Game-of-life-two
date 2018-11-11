@@ -1,10 +1,13 @@
 package ru.sbt.rgrtu.gol.game;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import ru.sbt.rgrtu.gol.config.Configuration;
 import ru.sbt.rgrtu.gol.config.ConfigurationProvider;
+import ru.sbt.rgrtu.gol.monitoring.MonitoringServiceImpl;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
@@ -28,6 +31,7 @@ public class JdbcBoardService implements BoardService {
     private final ConfigurationProvider configurationProvider;
     private final DataSource dataSource;
     private final JdbcTemplate jdbcTemplate;
+    private final MonitoringServiceImpl monitoringServiceImpl;
 
     private long seed;
     private BigInteger sizeX;
@@ -41,6 +45,7 @@ public class JdbcBoardService implements BoardService {
         this.configurationProvider = configurationProvider;
         this.dataSource = dataSource;
         jdbcTemplate = new JdbcTemplate(dataSource);
+        monitoringServiceImpl = new MonitoringServiceImpl();
     }
 
     @PostConstruct
@@ -95,7 +100,8 @@ public class JdbcBoardService implements BoardService {
     }
 
     private boolean isAlive(long generation, BigInteger x, BigInteger y) {
-        boolean result = false;
+
+     /*   boolean result = false;
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(
                      "select alive from Board where generation=? and x=? and y=?")
@@ -110,17 +116,23 @@ public class JdbcBoardService implements BoardService {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        return result;
-
-        /*       List<Boolean> results = jdbcTemplate.query("select alive from Board where generation=? and x=? and y=?"
+        return result;*/
+        return jdbcTemplate.query("select alive from Board where generation=? and x=? and y=?"
+                , new Object[]{(int) generation, x.intValue(), y.intValue()}, new ResultSetExtractor<Boolean>() {
+                    @Override
+                    public Boolean extractData(ResultSet rs) throws SQLException,
+                            DataAccessException {
+                        return rs.next() ? rs.getBoolean("alive") : false;
+                    }
+                });
+   /*     List<Boolean> results = jdbcTemplate.query("select alive from Board where generation=? and x=? and y=?"
                 , new Object[]{(int) generation, x.intValue(), y.intValue()}, new RowMapper() {
                     public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                         return rs.getBoolean(1);
                     }
                 });
-        if (results.isEmpty())
-            return false;
-        else return results.get(0);*/
+        if (!results.isEmpty())
+            result = results.get(0);*/
     }
 
     private void clearGeneration(long generation) {
