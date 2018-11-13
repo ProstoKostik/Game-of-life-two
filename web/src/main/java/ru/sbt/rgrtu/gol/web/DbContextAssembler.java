@@ -93,7 +93,7 @@ public class DbContextAssembler {
                 "       primary key (id)\n" +
                 "    )");
         jdbcTemplate.execute("create unique index if not exists pk_board_index on Board\n" +
-                "(generation, x, y)");
+                "(generation, x, y, user_id)");
         firstPool = true;
     }
 }

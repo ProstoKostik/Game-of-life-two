@@ -10,34 +10,37 @@
     <context:annotation-config/>
 
     <bean class="ru.sbt.rgrtu.gol.config.ConfigurationPropertiesLoader">
-        <constructor-arg name="file" value="config.properties" />
+        <constructor-arg name="file" value="config.properties"/>
     </bean>
 
-    <bean id="dataSourceConfig" class="com.zaxxer.hikari.HikariConfig" >
+    <bean id="dataSourceConfig" class="com.zaxxer.hikari.HikariConfig">
         <property name="connectionTestQuery" value="VALUES 1"/>
-        <property name="jdbcUrl" value="jdbc:hsqldb:mem:gol" />
-        <property name="username" value="sa" />
-        <property name="password" value="" />
+        <property name="jdbcUrl" value="jdbc:hsqldb:mem:gol"/>
+        <property name="username" value="sa"/>
+        <property name="password" value=""/>
     </bean>
-    <bean class="com.zaxxer.hikari.HikariDataSource" >
+    <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource">
         <constructor-arg ref="dataSourceConfig"/>
     </bean>
-    <bean id="dbInitializer" class="ru.sbt.rgrtu.gol.web.DbInitializer" />
+    <bean id="dbInitializer" class="ru.sbt.rgrtu.gol.web.DbInitializer"
+          factory-method="getInstance">
+        <constructor-arg ref="dataSource"/>
+    </bean>
 
     <bean id="board" class="ru.sbt.rgrtu.gol.game.JdbcBoardService" primary="false" depends-on="dbInitializer"/>
     <bean class="ru.sbt.rgrtu.gol.game.ThreadLocalCachingBoardService" primary="true">
-        <constructor-arg name="delegate" ref="board" />
-        <constructor-arg name="size" value="15" />
+        <constructor-arg name="delegate" ref="board"/>
+        <constructor-arg name="size" value="15"/>
     </bean>
 
     <bean class="java.util.concurrent.Executors" factory-method="newFixedThreadPool">
         <constructor-arg value="8"/>
     </bean>
-    <bean class="ru.sbt.rgrtu.gol.game.Gol" />
+    <bean class="ru.sbt.rgrtu.gol.game.Gol"/>
 
-    <bean class="ru.sbt.rgrtu.gol.monitoring.MonitoringServiceImpl" />
-    <bean class="ru.sbt.rgrtu.gol.web.presentation.HtmlPresentation" >
-        <constructor-arg name="reload" value="true" />
+    <bean class="ru.sbt.rgrtu.gol.monitoring.MonitoringServiceImpl"/>
+    <bean class="ru.sbt.rgrtu.gol.web.presentation.HtmlPresentation">
+        <constructor-arg name="reload" value="true"/>
     </bean>
 
 </beans>
