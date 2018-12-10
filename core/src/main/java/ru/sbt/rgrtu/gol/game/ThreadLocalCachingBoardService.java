@@ -48,7 +48,7 @@ public class ThreadLocalCachingBoardService implements BoardService {
     }
 
     @Override
-    public long getGeneration() {
+    public int getGeneration() {
         return delegate.getGeneration();
     }
 

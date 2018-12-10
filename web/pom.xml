@@ -19,9 +19,34 @@
         <test.jetty.stop-key>STOP</test.jetty.stop-key>
         <test.jetty.stop-port>9999</test.jetty.stop-port>
         <HikariCP.version>3.2.0</HikariCP.version>
+        <h2.version>1.4.196</h2.version>
+        <thirdparty.jetty.version>9.2.1.v20140609</thirdparty.jetty.version>
+        <hibernate.version>5.2.10.Final</hibernate.version>
     </properties>
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>${hibernate.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
@@ -102,6 +127,52 @@
                 </plugins>
             </build>
         </profile>
+
+        <profile>
+            <id>run-embedded-two</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.eclipse.jetty</groupId>
+                        <artifactId>jetty-maven-plugin</artifactId>
+                        <configuration>
+                            <httpConnector>
+                                <port>${test.jetty.port}</port>
+                            </httpConnector>
+                            <webAppConfig>
+                                <contextPath>/gol</contextPath>
+                            </webAppConfig>
+                            <contextXml>${test.jetty.context}</contextXml>
+                        </configuration>
+                        <dependencies>
+                            <dependency>
+                                <groupId>com.h2database</groupId>
+                                <artifactId>h2</artifactId>
+                                <version>${h2.version}</version>
+                            </dependency>
+                        </dependencies>
+                        <executions>
+                            <execution>
+                                <id>start-jetty</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>stop</goal>
+                                    <goal>run-war</goal>
+                                </goals>
+                                <configuration>
+                                    <stopKey>${test.jetty.stop-key}</stopKey>
+                                    <stopPort>${test.jetty.stop-port}</stopPort>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
     </profiles>
 
 </project>

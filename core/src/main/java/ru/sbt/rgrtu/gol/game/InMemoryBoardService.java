@@ -18,7 +18,7 @@ public class InMemoryBoardService implements BoardService {
     private long seed;
     private BigInteger sizeX;
     private BigInteger sizeY;
-    private long generation;
+    private int generation;
 
     /**
      * Current values of points on the game field.
@@ -85,7 +85,7 @@ public class InMemoryBoardService implements BoardService {
     }
 
     @Override
-    public long getGeneration() {
+    public int getGeneration() {
         return generation;
     }
 

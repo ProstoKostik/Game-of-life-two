@@ -5,6 +5,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.sbt.rgrtu.context.Context;
 import ru.sbt.rgrtu.gol.game.BoardService;
 import ru.sbt.rgrtu.gol.game.Gol;
+import ru.sbt.rgrtu.gol.game.ImplBoardService;
 import ru.sbt.rgrtu.gol.game.JdbcBoardService;
 import ru.sbt.rgrtu.gol.monitoring.MonitoringService;
 import ru.sbt.rgrtu.gol.web.presentation.HtmlPresentation;
@@ -23,9 +24,9 @@ public class GolFilter implements Filter {
         req.getSession().setAttribute("gol", context.get(Gol.class));
         req.getSession().setAttribute("presentation", context.get(HtmlPresentation.class));
         req.getSession().setAttribute("monitoring", context.get(MonitoringService.class));*/
-        context.getBean(JdbcBoardService.class).setUserId(req.getSession().getId());
-        context.getBean(JdbcBoardService.class).init();
-        req.getSession().setAttribute("service", context.getBean(JdbcBoardService.class));
+        context.getBean(ImplBoardService.class).setUserId(req.getSession().getId());
+        context.getBean(ImplBoardService.class).init();
+        req.getSession().setAttribute("service", context.getBean(ImplBoardService.class));
         req.getSession().setAttribute("gol", context.getBean(Gol.class));
         req.getSession().setAttribute("presentation", context.getBean(HtmlPresentation.class));
         req.getSession().setAttribute("monitoring", context.getBean(MonitoringService.class));
@@ -39,7 +40,7 @@ public class GolFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
         if (req.getSession() == null || req.getSession().getAttribute("gol") == null) {
-            initGol("heavyContext.xml", req);
+            initGol("springDataContext.xml", req);
             //        initGol("simpleContext.xml");
         }
         chain.doFilter(request, response);

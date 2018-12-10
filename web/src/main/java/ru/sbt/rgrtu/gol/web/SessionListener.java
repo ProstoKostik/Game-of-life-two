@@ -1,5 +1,6 @@
 package ru.sbt.rgrtu.gol.web;
 
+import ru.sbt.rgrtu.gol.game.ImplBoardService;
 import ru.sbt.rgrtu.gol.game.JdbcBoardService;
 
 import javax.servlet.annotation.WebListener;
@@ -14,7 +15,9 @@ public class SessionListener implements HttpSessionListener {
 
     @Override
     public void sessionDestroyed(HttpSessionEvent ev) {
-        JdbcBoardService jdbcBoardService = (JdbcBoardService) ev.getSession().getAttribute("service");
-        jdbcBoardService.clearGeneration(jdbcBoardService.getGeneration());
+        ImplBoardService implBoardService = (ImplBoardService ) ev.getSession().getAttribute("service");
+        implBoardService.clearGeneration(implBoardService.getGeneration());
+      /*  JdbcBoardService jdbcBoardService = (JdbcBoardService) ev.getSession().getAttribute("service");
+        jdbcBoardService.clearGeneration(jdbcBoardService.getGeneration());*/
     }
 }

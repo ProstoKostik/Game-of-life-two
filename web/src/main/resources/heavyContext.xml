@@ -28,6 +28,7 @@
     </bean>
 
     <bean id="board" class="ru.sbt.rgrtu.gol.game.JdbcBoardService" primary="false" depends-on="dbInitializer"/>
+
     <bean class="ru.sbt.rgrtu.gol.game.ThreadLocalCachingBoardService" primary="true">
         <constructor-arg name="delegate" ref="board"/>
         <constructor-arg name="size" value="15"/>

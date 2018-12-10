@@ -40,7 +40,7 @@ public interface BoardService {
     /**
      * Get the number of last applied generation.
      */
-    long getGeneration();
+    int getGeneration();
 
     void setUserId(String userId);
 }
