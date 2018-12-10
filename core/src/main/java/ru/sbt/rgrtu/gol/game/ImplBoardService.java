@@ -29,7 +29,7 @@ public class ImplBoardService extends BDBoardService {
     }
 
     protected boolean isAlive(int generation, BigInteger x, BigInteger y) {
-        Board b = boardRepository.findTop1ByGenerationAndXAndY(generation, x.intValue(), y.intValue());
+        Board b = boardRepository.findTop1ByGenerationAndXAndYAndUserID(generation, x.intValue(), y.intValue(), getUserId());
         boolean result = false;
         if (b != null)
             result = b.getAlive() == 1;

@@ -7,6 +7,6 @@ import ru.sbt.rgrtu.gol.entity.Board;
 @Repository
 public interface BoardRepository extends CrudRepository<Board, Integer> {
 
-    Board findTop1ByGenerationAndXAndY(int generation, int x, int y);
+    Board findTop1ByGenerationAndXAndYAndUserID(int generation, int x, int y, String userId);
 
 }
